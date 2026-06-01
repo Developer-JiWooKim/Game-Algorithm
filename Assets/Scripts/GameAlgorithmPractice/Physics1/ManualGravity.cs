@@ -8,7 +8,7 @@ public class ManualGravity : MonoBehaviour
     private float impactRange = 0f;
     private float moveSpeed = 3f;
     private Vector3 distance;
-
+    
     [SerializeField] private float currentVelocityY = 0f;
     [SerializeField] private Transform target;
 
