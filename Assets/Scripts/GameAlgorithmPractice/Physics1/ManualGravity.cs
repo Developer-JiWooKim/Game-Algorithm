@@ -1,6 +1,4 @@
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class ManualGravity : MonoBehaviour
 {
