@@ -6,7 +6,7 @@ public class MonsterMove : MonoBehaviour
 
     private MonsterSight monsterSight;
 
-    private float moveSpeed = 3f;
+    private float moveSpeed = 1f;
 
     private void Start()
     {
@@ -17,7 +17,9 @@ public class MonsterMove : MonoBehaviour
     void Update()
     {
         // #TODO: FSM 만들고 그에 따라 이동 여부 결정
-        if (monsterSight.IsSense) Move();
+        // if (monsterSight.IsSense)
+
+        Move();
     }
 
     private void Move()
@@ -26,7 +28,7 @@ public class MonsterMove : MonoBehaviour
         Vector3 moveDir = target.position - transform.position.normalized;
         moveDir.y = 0;
 
-        transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
+        transform.position += moveDir * Time.deltaTime * moveSpeed;
         Quaternion rotation = Quaternion.LookRotation(moveDir, Vector3.up);
         transform.rotation = rotation;
     }
