@@ -3,29 +3,23 @@ using UnityEngine.InputSystem;
 
 public class PlayerMove : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f;
-    
+    private float moveSpeed = 5f;
+
     private Vector2 inputVector = Vector2.zero;
 
     // Update is called once per frame
     void Update()
     {
-        inputVector = Vector2.zero;
-
         // InputSystem
         if (Keyboard.current is not null) InputKeyboardValue(ref inputVector);
 
-        // Vector3 정규화
-        Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y).normalized;
-
-        if (moveDir.magnitude > 0)
-        {
-            transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
-        }
+        Move();
     }
 
     private void InputKeyboardValue(ref Vector2 inputVector)
     {
+        inputVector = Vector2.zero;
+
         float h = 0;
         float v = 0;
 
@@ -36,5 +30,18 @@ public class PlayerMove : MonoBehaviour
         if (Keyboard.current.sKey.isPressed) v = -1;
 
         inputVector = new Vector2(h, v);
+    }
+
+    private void Move()
+    {
+        // Vector3 정규화
+        Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y).normalized;        
+
+        if (moveDir.magnitude > 0)
+        {
+            transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
+            Quaternion rotation = Quaternion.LookRotation(moveDir, Vector3.up);
+            transform.rotation = rotation;
+        }
     }
 }
