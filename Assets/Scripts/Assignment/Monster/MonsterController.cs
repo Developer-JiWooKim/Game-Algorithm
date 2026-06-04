@@ -10,6 +10,8 @@ public class MonsterController : MonoBehaviour
     private MonsterSight _monsterSight;
     private MonsterMove _monsterMove;
 
+    private bool _isSense = false;
+
     private void Start() => Initialize();
     private void Initialize()
     {
@@ -18,8 +20,10 @@ public class MonsterController : MonoBehaviour
     }
     private void Update()
     {
-        if(_monsterSight.TargetSense(target))
-        {
+        _isSense = _monsterSight.TargetSense(target);
+        Debug.Log(_isSense);
+        if (_isSense)
+        {            
             _monsterMove.MoveToTarget(target);
         }
     }

@@ -1,11 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterSight : MonoBehaviour
 {
     [SerializeField] private float sightAngle = 30f;
 
+    private List<Collider> hitTargetList = new List<Collider>();
+
     private float detectionRange = 10f;
-    private bool isSense = false;
+    private bool _isSense = false;
 
     public bool TargetSense(Transform target)
     {
@@ -14,7 +17,7 @@ public class MonsterSight : MonoBehaviour
         // 타겟이 범위(현재 10f) 
         if (dirToPlayer.magnitude > detectionRange)
         {
-            return isSense = false;
+            return _isSense = false;
         }
 
         float dot = Vector3.Dot(transform.forward, dirToPlayer.normalized);
@@ -23,18 +26,22 @@ public class MonsterSight : MonoBehaviour
         // 시야각 안으로 플레이어가 들어오면 감지 성공
         if (angle < sightAngle)
         {
-            return isSense = true;
+            return _isSense = true;
         }
         else
         {
-            return isSense = false;
+            return _isSense = false;
         }
     }
 
     private void OnDrawGizmos()
     {
+        // 경계 범위
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
+
         // 시야각 경계선 (왼쪽)
-        Gizmos.color = isSense ? Color.red : Color.green;
+        Gizmos.color = _isSense ? Color.red : Color.green;
         Vector3 leftDir = Quaternion.Euler(0, -sightAngle, 0) * transform.forward;
         Gizmos.DrawRay(transform.position, leftDir * detectionRange);
 
