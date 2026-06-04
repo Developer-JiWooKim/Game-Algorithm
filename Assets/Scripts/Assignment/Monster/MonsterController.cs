@@ -6,14 +6,15 @@ using UnityEngine;
 public class MonsterController : MonoBehaviour
 {
     [SerializeField] private Transform target;
+
     private MonsterSight _monsterSight;
     private MonsterMove _monsterMove;
 
     private void Start() => Initialize();
     private void Initialize()
     {
-        _monsterMove = gameObject.GetComponent<MonsterMove>();
-        _monsterSight = gameObject.GetComponent<MonsterSight>();
+        _monsterMove  = GetComponent<MonsterMove>();
+        _monsterSight = GetComponent<MonsterSight>();
     }
     private void Update()
     {
@@ -22,5 +23,4 @@ public class MonsterController : MonoBehaviour
             _monsterMove.MoveToTarget(target);
         }
     }
-
 }
