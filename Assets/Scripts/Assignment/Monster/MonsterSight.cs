@@ -5,8 +5,6 @@ public class MonsterSight : MonoBehaviour
 {
     [SerializeField] private float sightAngle = 30f;
 
-    private List<Collider> hitTargetList = new List<Collider>();
-
     private float detectionRange = 10f;
     private bool _isSense = false;
 
