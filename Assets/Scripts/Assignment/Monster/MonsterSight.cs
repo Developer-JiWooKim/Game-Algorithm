@@ -2,39 +2,35 @@ using UnityEngine;
 
 public class MonsterSight : MonoBehaviour
 {
-    [SerializeField] private Transform target;
     [SerializeField] private float sightAngle = 30f;
 
     private float detectionRange = 10f;
-    private bool isSense = false;   // 타겟 감지 여부
+    private bool isSense = false;
 
-    public bool IsSense => isSense;
-
-    void Update()
-    {
-        if (target == null) return;
-
-        TargetSense();
-    }
-
-    private void TargetSense()
+    public bool TargetSense(Transform target)
     {
         Vector3 dirToPlayer = target.position - transform.position;
+
+        // 타겟이 범위(현재 10f) 
+        if (dirToPlayer.magnitude > detectionRange)
+        {
+            return isSense = false;
+        }
 
         float dot = Vector3.Dot(transform.forward, dirToPlayer.normalized);
         float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
 
         // 시야각 안으로 플레이어가 들어오면 감지 성공
-        if(angle < sightAngle)
+        if (angle < sightAngle)
         {
-            isSense = true;
+            return isSense = true;
         }
         else
         {
-            isSense = false;
+            return isSense = false;
         }
-
     }
+
     private void OnDrawGizmos()
     {
         // 시야각 경계선 (왼쪽)

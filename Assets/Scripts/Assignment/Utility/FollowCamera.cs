@@ -11,6 +11,11 @@ public class FollowCamera : MonoBehaviour
 
     private void LateUpdate()
     {
+        SmoothFollowing();
+    }
+
+    private void SmoothFollowing()
+    {
         Vector3 targetPosition = target.position + cameraOffset;
 
         transform.position = Vector3.SmoothDamp(
