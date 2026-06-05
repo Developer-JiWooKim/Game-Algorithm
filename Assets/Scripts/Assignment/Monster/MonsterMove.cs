@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class MonsterMove : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 3f;   // 이동 속도
-    [SerializeField] private float rotateSpeed = 3f; // 회전 속도
+    [SerializeField] private float moveSpeed = 7f;   // 이동 속도
+    [SerializeField] private float rotateSpeed = 7f; // 회전 속도
 
     public void MoveToTarget(Transform target)
     {

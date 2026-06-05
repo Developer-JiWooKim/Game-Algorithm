@@ -5,13 +5,25 @@ using UnityEngine;
 /// </summary>
 public class MonsterController : MonoBehaviour
 {
-    [SerializeField] private Transform target;
+    private Transform _target;
 
     private MonsterSight _monsterSight;
     private MonsterMove  _monsterMove;
     private MonsterFSM   _monsterFSM;
 
     private bool isSensed = false;
+
+    public Transform Target
+    {
+        get
+        {
+            return _target;
+        }
+        set
+        {
+            _target = value;
+        }
+    }
 
     private void Start() => Initialize();
     private void Initialize()
@@ -23,12 +35,12 @@ public class MonsterController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        isSensed = _monsterSight.TargetSense(target);
+        isSensed = _monsterSight.TargetSense(_target);
     }
 
     private void Update()
     {
-        _monsterFSM.Evaluate(isSensed, target);
+        _monsterFSM.Evaluate(isSensed, _target);
 
         MonsterAI();
     }
@@ -38,7 +50,7 @@ public class MonsterController : MonoBehaviour
         switch (_monsterFSM.Current)
         {
             case MonsterFSM.State.Chase:
-                _monsterMove.MoveToTarget(target);
+                _monsterMove.MoveToTarget(_target);
                 break;
             case MonsterFSM.State.Attack:
                 // #TODO: 타겟이 범위 안에 들어오면 할 행동 -> OnTriggerEnter로 처리해도될듯?

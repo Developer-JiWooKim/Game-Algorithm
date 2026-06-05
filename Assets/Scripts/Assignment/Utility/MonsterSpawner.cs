@@ -40,6 +40,7 @@ public class MonsterSpawner : MonoBehaviour
             spawnPos.y = spawnY;
 
             GameObject monster = Instantiate(monsterPrefab, spawnPos, Quaternion.identity);
+            monster.GetComponent<MonsterController>().Target = target;
 
             _monsters.Add(monster);
         }

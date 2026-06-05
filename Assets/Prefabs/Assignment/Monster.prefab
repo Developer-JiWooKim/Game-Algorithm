@@ -358,7 +358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSight
   detectionRange: 7
-  fieldOfView: 60
+  fieldOfView: 120
   isSense: 0
 --- !u!114 &5455248322757765073
 MonoBehaviour:
@@ -372,8 +372,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4d44ddb2a03bb440b8578a12700e668, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterMove
-  moveSpeed: 3
-  rotateSpeed: 3
+  moveSpeed: 7
+  rotateSpeed: 7
 --- !u!114 &5455916527998377572
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,7 +386,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 420a4ce1a8be0364482c4b1c734b8150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterController
-  target: {fileID: 0}
 --- !u!114 &262672887263307539
 MonoBehaviour:
   m_ObjectHideFlags: 0

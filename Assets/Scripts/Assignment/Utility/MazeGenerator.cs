@@ -4,10 +4,8 @@ using UnityEngine;
 public class MazeGenerator : MonoBehaviour
 {
     [Header("Gird")]
-    [Tooltip("가로")]
-    [SerializeField] private int _cols = 10;
-    [Tooltip("세로")]
-    [SerializeField] private int _rows= 10;
+    [SerializeField] private int _cols = 10; // 가로
+    [SerializeField] private int _rows= 10;  // 세로
     [SerializeField] private float _cellSize = 5f;
 
     [Header("시작 점")]
@@ -18,16 +16,13 @@ public class MazeGenerator : MonoBehaviour
     [SerializeField] private float wallThickness = 0.3f;
     [SerializeField] private float wallHeight = 3f;
 
-    [Header("Outer Walls")]
-    [SerializeField] private bool generateOuterWalls = true;
-
     [Header("Random Seed")]
     [SerializeField] private int seed = -1;    
 
-    private Cell[,] _grid;
+    private Cell[,] _grid;    
     private List<GameObject> _wallObjects = new List<GameObject>();
-
     private List<Cell> _allCells = new List<Cell>();
+
     public IReadOnlyList<Cell> AllCells => _allCells;
     public int Cols  => _cols;
     public int Rows => _rows;
@@ -115,10 +110,10 @@ public class MazeGenerator : MonoBehaviour
         int c = cell.col;
         int r = cell.row;
 
-        if (r + 1 < _rows&& !_grid[c, r + 1].visited) list.Add(_grid[c, r + 1]); // up
-        if (r - 1 >= 0 && !_grid[c, r - 1].visited) list.Add(_grid[c, r - 1]);   // down
+        if (r + 1 < _rows&& !_grid[c, r + 1].visited) list.Add(_grid[c, r + 1]);  // up
+        if (r - 1 >= 0 && !_grid[c, r - 1].visited) list.Add(_grid[c, r - 1]);    // down
         if (c + 1 < _cols && !_grid[c + 1, r].visited) list.Add(_grid[c + 1, r]); // left
-        if (c - 1 >= 0 && !_grid[c - 1, r].visited) list.Add(_grid[c - 1, r]);   // right
+        if (c - 1 >= 0 && !_grid[c - 1, r].visited) list.Add(_grid[c - 1, r]);    // right
 
         return list;
     }
@@ -128,9 +123,9 @@ public class MazeGenerator : MonoBehaviour
         int dc = b.col - a.col;
         int dr = b.row - a.row;
 
-        if (dr == 1) { a.upWall = false; b.downWall = false; } // a 위에 b
-        else if (dr == -1) { a.downWall = false; b.upWall = false; } // a 아래에 b
-        else if (dc == 1) { a.leftWall = false; b.rightWall = false; } // a 오른쪽에 b
+        if (dr == 1) { a.upWall = false; b.downWall = false; }          // a 위에 b
+        else if (dr == -1) { a.downWall = false; b.upWall = false; }    // a 아래에 b
+        else if (dc == 1) { a.leftWall = false; b.rightWall = false; }  // a 오른쪽에 b
         else if (dc == -1) { a.rightWall = false; b.leftWall = false; } // a 왼쪽에 b
     }
 
@@ -190,30 +185,52 @@ public class MazeGenerator : MonoBehaviour
         _wallObjects.Add(wall);
     }
 
-    // 에디터에서 그리드 확인용
-    //private void OnDrawGizmos()
-    //{
-    //    // 월드 범위 테두리
-    //    Gizmos.color = Color.green;
-    //    float totalW = _cols * _cellSize;
-    //    float totalH = _rows* _cellSize;
-    //    Vector3 center = new Vector3(
-    //        worldStart.x + totalW * 0.5f, 0,
-    //        worldStart.y + totalH * 0.5f);
-    //    Gizmos.DrawWireCube(center, new Vector3(totalW, 0.1f, totalH));
+    public Vector2Int WorldToCell(Vector3 worldPos)
+    {
+        int col = (int)((worldPos.x - worldStart.x) / _cellSize);
+        int row = (int)((worldPos.z - worldStart.y) / _cellSize);
 
-    //    // 셀 그리드
-    //    Gizmos.color = new Color(1, 1, 0, 0.2f);
-    //    for (int r = 0; r < rows; r++)
-    //    {
-    //        for (int c = 0; c < _cols; c++)
-    //        {
-    //            float cx = worldStart.x + c * _cellSize + _cellSize * 0.5f;
-    //            float cz = worldStart.y + r * _cellSize + _cellSize * 0.5f;
-    //            Gizmos.DrawWireCube(
-    //                new Vector3(cx, 0, cz),
-    //                new Vector3(_cellSize - 0.1f, 0.1f, _cellSize - 0.1f));
-    //        }
-    //    }
-    //}
+        col = Mathf.Clamp(col, 0, _cols - 1);
+        row = Mathf.Clamp(row, 0, _rows - 1);
+
+        return new Vector2Int(col, row);
+    }
+
+    public Vector3 CellToWorld(Vector2Int cell)
+    {
+        return _grid[cell.x, cell.y].worldCenter;
+    }
+
+    public Cell GetCell(int col, int row)
+    {
+        if (col < 0 || col >= _cols || row < 0 || row >= _rows) return null;
+        return _grid[col, row];
+    }
+
+    // 에디터에서 그리드 확인용
+    private void OnDrawGizmos()
+    {
+        // 월드 범위 테두리
+        Gizmos.color = Color.green;
+        float totalW = _cols * _cellSize;
+        float totalH = _rows * _cellSize;
+        Vector3 center = new Vector3(
+            worldStart.x + totalW * 0.5f, 0,
+            worldStart.y + totalH * 0.5f);
+        Gizmos.DrawWireCube(center, new Vector3(totalW, 0.1f, totalH));
+
+        // 셀 그리드
+        Gizmos.color = new Color(1, 1, 0, 0.2f);
+        for (int r = 0; r < _rows; r++)
+        {
+            for (int c = 0; c < _cols; c++)
+            {
+                float cx = worldStart.x + c * _cellSize + _cellSize * 0.5f;
+                float cz = worldStart.y + r * _cellSize + _cellSize * 0.5f;
+                Gizmos.DrawWireCube(
+                    new Vector3(cx, 0, cz),
+                    new Vector3(_cellSize - 0.1f, 0.1f, _cellSize - 0.1f));
+            }
+        }
+    }
 }
