@@ -4,7 +4,7 @@ using UnityEngine;
 public class MonsterSpawner : MonoBehaviour
 {
     [SerializeField] private MazeGenerator mazeGenerator;
-    [SerializeField] private Vector2Int playerStartPoint;
+    [SerializeField] private Vector2Int playerStartPoint = new Vector2Int(0, 0);
 
     [SerializeField] private GameObject monsterPrefab;
     [SerializeField] private Transform target;
@@ -20,10 +20,36 @@ public class MonsterSpawner : MonoBehaviour
     {
         ClearAll();
 
+        var candidates = new List<Cell>();
+        foreach (Cell cell in mazeGenerator.AllCells)
+        {
+            if (cell.col == playerStartPoint.x && cell.row == playerStartPoint.y) continue;
+            candidates.Add(cell);
+        }
+
+        for (int i = candidates.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (candidates[i], candidates[j]) = (candidates[j], candidates[i]);
+        }
+
         for (int i = 0; i < monsterCount; i++)
         {
-            
+            // Cell.worldCenter로 스폰 위치 결정 (벽 겹침 없음)
+            Vector3 spawnPos = candidates[Random.Range(0, candidates.Count)].worldCenter;
+            spawnPos.y = spawnY;
+
+            GameObject monster = Instantiate(monsterPrefab, spawnPos, Quaternion.identity);
+
+            _monsters.Add(monster);
         }
+    }
+    public void RemoveMonster(GameObject monster)
+    {
+        if (!_monsters.Contains(monster)) return;
+
+        _monsters.Remove(monster);
+        Destroy(monster);
     }
 
     private void ClearAll()

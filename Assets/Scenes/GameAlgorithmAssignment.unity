@@ -1262,9 +1262,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c92a78ddd1bb274a886eca310211ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MazeGenerator
-  cols: 10
-  rows: 10
-  cellSize: 5
+  _cols: 10
+  _rows: 10
+  _cellSize: 5
   worldStart: {x: -25, y: -25}
   wallPrefab: {fileID: 2775634970881188326, guid: 0616d25d5174add498fe09aaf1c695a5, type: 3}
   wallThickness: 0.3
@@ -1281,6 +1281,56 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1282344939
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1282344941}
+  - component: {fileID: 1282344940}
+  m_Layer: 0
+  m_Name: MonsterSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1282344940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1282344939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c0e2c3fc04848548ad8bc3d680b27ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawner
+  mazeGenerator: {fileID: 1211507982}
+  playerStartPoint: {x: -22, y: -22}
+  monsterPrefab: {fileID: 2085820254}
+  target: {fileID: 1001913351}
+  monsterCount: 5
+  spawnY: 1
+--- !u!4 &1282344941
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1282344939}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.61912, y: 0.00001, z: -5.85806}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1433,6 +1483,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1906851346}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2085820254 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7092602877218490808, guid: 32621549e4849754a8a8644584fa71e0, type: 3}
+  m_PrefabInstance: {fileID: 2717256037024322610}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2717256037024322610
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1493,6 +1548,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Monster
       objectReference: {fileID: 0}
+    - target: {fileID: 7092602877218490808, guid: 32621549e4849754a8a8644584fa71e0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7561861720274258743, guid: 32621549e4849754a8a8644584fa71e0, type: 3}
       propertyPath: m_Radius
       value: 1.5
@@ -1500,6 +1559,14 @@ PrefabInstance:
     - target: {fileID: 8014174103750535820, guid: 32621549e4849754a8a8644584fa71e0, type: 3}
       propertyPath: m_IsTrigger
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8388424715719947433, guid: 32621549e4849754a8a8644584fa71e0, type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8388424715719947433, guid: 32621549e4849754a8a8644584fa71e0, type: 3}
+      propertyPath: m_Constraints
+      value: 116
       objectReference: {fileID: 0}
     - target: {fileID: 8388424715719947433, guid: 32621549e4849754a8a8644584fa71e0, type: 3}
       propertyPath: m_IsKinematic
@@ -1522,3 +1589,4 @@ SceneRoots:
   - {fileID: 208205338}
   - {fileID: 181496428}
   - {fileID: 1211507983}
+  - {fileID: 1282344941}
