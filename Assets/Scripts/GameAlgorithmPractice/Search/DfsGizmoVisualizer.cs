@@ -12,7 +12,7 @@ public class DfsGizmoVisualizer : MonoBehaviour
     [SerializeField] private int height = 3;
 
     [Tooltip("Scene 뷰에 그릴 칸 크기입니다.")]
-    [SerializeField] private float cellSize = 1f;
+    [SerializeField] private float _cellSize = 1f;
 
     private readonly Stack<Vector2Int> frontier = new Stack<Vector2Int>();
     private readonly HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
@@ -106,13 +106,13 @@ public class DfsGizmoVisualizer : MonoBehaviour
             for (int x = 0; x < width; x++)
             {
                 Vector2Int node = new Vector2Int(x, y);
-                Vector3 position = transform.position + new Vector3(x * cellSize, 0f, y * cellSize);
+                Vector3 position = transform.position + new Vector3(x * _cellSize, 0f, y * _cellSize);
 
                 Gizmos.color = GetNodeColor(node);
-                Gizmos.DrawCube(position, Vector3.one * (cellSize * 0.8f));
+                Gizmos.DrawCube(position, Vector3.one * (_cellSize * 0.8f));
 
                 Gizmos.color = Color.black;
-                Gizmos.DrawWireCube(position, Vector3.one * (cellSize * 0.8f));
+                Gizmos.DrawWireCube(position, Vector3.one * (_cellSize * 0.8f));
             }
         }
     }

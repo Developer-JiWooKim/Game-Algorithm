@@ -14,7 +14,7 @@ public class AStarGizmoVisualizer : MonoBehaviour
 
     // Scene 뷰에 보이는 한 칸의 실제 크기입니다. 값이 커질수록 칸 사이 간격도 커집니다.
     [Tooltip("Scene 뷰에 그릴 칸 크기입니다.")]
-    [SerializeField] private float cellSize = 1f;
+    [SerializeField] private float _cellSize = 1f;
 
     [Header("Path")]
     // 탐색을 시작하는 칸입니다. 초록색으로 표시됩니다.
@@ -273,15 +273,15 @@ public class AStarGizmoVisualizer : MonoBehaviour
                 Vector2Int node = new Vector2Int(x, y);
 
                 // 2D 격자 좌표를 Unity 월드 좌표로 바꿉니다. y 높이는 0으로 고정합니다.
-                Vector3 position = transform.position + new Vector3(x * cellSize, 0f, y * cellSize);
+                Vector3 position = transform.position + new Vector3(x * _cellSize, 0f, y * _cellSize);
 
                 // 칸의 상태에 따라 색을 고르고, 색칠된 정육면체를 그립니다.
                 Gizmos.color = GetNodeColor(node);
-                Gizmos.DrawCube(position, Vector3.one * (cellSize * 0.85f));
+                Gizmos.DrawCube(position, Vector3.one * (_cellSize * 0.85f));
 
                 // 칸 경계를 검은 선으로 한 번 더 그려서 격자 구조가 잘 보이게 합니다.
                 Gizmos.color = Color.black;
-                Gizmos.DrawWireCube(position, Vector3.one * (cellSize * 0.85f));
+                Gizmos.DrawWireCube(position, Vector3.one * (_cellSize * 0.85f));
             }
         }
 
@@ -340,8 +340,8 @@ public class AStarGizmoVisualizer : MonoBehaviour
         for (int i = 1; i < path.Count; i++)
         {
             // 칸 중심보다 살짝 높은 위치에 선을 그려서 큐브 안에 묻히지 않게 합니다.
-            Vector3 from = transform.position + new Vector3(path[i - 1].x * cellSize, 0.55f, path[i - 1].y * cellSize);
-            Vector3 to = transform.position + new Vector3(path[i].x * cellSize, 0.55f, path[i].y * cellSize);
+            Vector3 from = transform.position + new Vector3(path[i - 1].x * _cellSize, 0.55f, path[i - 1].y * _cellSize);
+            Vector3 to = transform.position + new Vector3(path[i].x * _cellSize, 0.55f, path[i].y * _cellSize);
             Gizmos.DrawLine(from, to);
         }
     }

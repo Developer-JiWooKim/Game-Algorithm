@@ -2,62 +2,52 @@ using UnityEngine;
 
 public class MonsterSight : MonoBehaviour
 {
-    [SerializeField] private float sightAngle = 30f;
-
-    private float detectionRange = 10f;
-    private bool _isSense = false;
+    [SerializeField] private float detectionRange = 7f;   // 감지 반경
+    [SerializeField] private float fieldOfView    = 60f;   // 전체 시야각
+    [SerializeField] private bool  isSense        = false; // 감지 여부
 
     public bool TargetSense(Transform target)
     {
+        if (target == null) return isSense = false;
+
         Vector3 dirToPlayer = target.position - transform.position;
+        dirToPlayer.y = 0;
 
         // 타겟이 범위(현재 10f) 
         if (dirToPlayer.magnitude > detectionRange)
         {
-            return _isSense = false;
+            return isSense = false;
         }
 
-        float dot = Vector3.Dot(transform.forward, dirToPlayer.normalized);
+        float dot = Vector3.Dot(transform.forward, dirToPlayer.normalized);    
+        dot = Mathf.Clamp(dot, -1, 1);
+
         float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
-
+        
         // 시야각 안으로 플레이어가 들어오면 감지 성공
-        if (angle < sightAngle)
-        {
-            return _isSense = true;
-        }
-        else
-        {
-            return _isSense = false;
-        }
+        return isSense = (angle < fieldOfView * 0.5f);
     }
 
     private void OnDrawGizmos()
-    {
-        // 경계 범위
+    {     
+        // 감지 반경
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        // 시야각 경계선 (왼쪽)
-        Gizmos.color = _isSense ? Color.red : Color.green;
-        Vector3 leftDir = Quaternion.Euler(0, -sightAngle, 0) * transform.forward;
+        // 시야각 경계선 (회전 행렬로 좌/우 벡터 계산)
+        Vector3 fwd = transform.forward;
+        float halfRad = fieldOfView * 0.5f * Mathf.Deg2Rad;
+
+        Vector3 leftDir = new Vector3(
+             fwd.x * Mathf.Cos(-halfRad) - fwd.z * Mathf.Sin(-halfRad), 0,
+             fwd.x * Mathf.Sin(-halfRad) + fwd.z * Mathf.Cos(-halfRad));
+
+        Vector3 rightDir = new Vector3(
+             fwd.x * Mathf.Cos(halfRad) - fwd.z * Mathf.Sin(halfRad), 0,
+             fwd.x * Mathf.Sin(halfRad) + fwd.z * Mathf.Cos(halfRad));
+
+        Gizmos.color = isSense ? Color.red : Color.yellow;
         Gizmos.DrawRay(transform.position, leftDir * detectionRange);
-
-        // 시야각 경계선 (오른쪽)
-        Vector3 rightDir = Quaternion.Euler(0, sightAngle, 0) * transform.forward;
         Gizmos.DrawRay(transform.position, rightDir * detectionRange);
-
-        // 시야각 부채꼴 채우기
-        int segments = 20;
-        Vector3 prevDir = leftDir;
-        for (int i = 1; i <= segments; i++)
-        {
-            float angle = -sightAngle + (2 * sightAngle * i / segments);
-            Vector3 newDir = Quaternion.Euler(0, angle, 0) * transform.forward;
-            Gizmos.DrawLine(
-                transform.position + prevDir * detectionRange,
-                transform.position + newDir * detectionRange
-            );
-            prevDir = newDir;
-        }
     }
 }
