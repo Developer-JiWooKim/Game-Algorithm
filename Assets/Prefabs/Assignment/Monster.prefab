@@ -358,7 +358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSight
   detectionRange: 7
-  fieldOfView: 120
+  fieldOfView: 90
   isSense: 0
 --- !u!114 &5455248322757765073
 MonoBehaviour:

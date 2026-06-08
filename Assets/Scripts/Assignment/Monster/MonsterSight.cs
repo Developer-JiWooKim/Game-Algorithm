@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class MonsterSight : MonoBehaviour
 {
-    [SerializeField] private float detectionRange = 7f;   // 감지 반경
-    [SerializeField] private float fieldOfView    = 60f;   // 전체 시야각
+    [SerializeField] private float detectionRange = 7f;    // 탐지 반경
+    [SerializeField] private float fieldOfView    = 90f;   // 시야각
     [SerializeField] private bool  isSense        = false; // 감지 여부
 
     public bool TargetSense(Transform target)
@@ -13,14 +13,14 @@ public class MonsterSight : MonoBehaviour
         Vector3 dirToPlayer = target.position - transform.position;
         dirToPlayer.y = 0;
 
-        // 타겟이 범위(현재 10f) 
+        // 타겟이 탐지 반경(detectionRange) 밖에 있으면 내적 계산 X
         if (dirToPlayer.magnitude > detectionRange)
         {
             return isSense = false;
         }
 
         float dot = Vector3.Dot(transform.forward, dirToPlayer.normalized);    
-        dot = Mathf.Clamp(dot, -1, 1);
+        dot = Mathf.Clamp(dot, -1, 1); // 내적값이 -1 ~ 1을 초과하지 못하게 방어
 
         float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
         

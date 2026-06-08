@@ -25,7 +25,7 @@ public class AStarPathfinder : MonoBehaviour
     {
         // 시작 지점과 목표지점의 셀을 구함
         Vector2Int start = mazeGenerator.WorldToCell(startWorld);
-        Vector2Int goal = mazeGenerator.WorldToCell(goalWorld);
+        Vector2Int goal  = mazeGenerator.WorldToCell(goalWorld);
 
         // 시작 지점과 목표 지점이 같으면 null
         if (start == goal) return null;
@@ -53,7 +53,6 @@ public class AStarPathfinder : MonoBehaviour
             openSet.Remove(current);
             closedSet.Add(current);
 
-            // 
             foreach (var neighbor in GetNeighbors(current))
             {
                 if (closedSet.Contains(neighbor)) continue;
@@ -111,8 +110,8 @@ public class AStarPathfinder : MonoBehaviour
         // false면 벽 없음 - 이동 가능
         if (!cell.upWall)    result.Add(new Vector2Int(node.x,     node.y + 1));
         if (!cell.downWall)  result.Add(new Vector2Int(node.x,     node.y - 1));
-        if (!cell.leftWall)  result.Add(new Vector2Int(node.x + 1, node.y));
-        if (!cell.rightWall) result.Add(new Vector2Int(node.x - 1, node.y));
+        if (!cell.leftWall)  result.Add(new Vector2Int(node.x - 1, node.y));
+        if (!cell.rightWall) result.Add(new Vector2Int(node.x + 1, node.y));
 
         return result;
 
