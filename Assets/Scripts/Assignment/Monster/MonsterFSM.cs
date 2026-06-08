@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class MonsterFSM : MonoBehaviour
@@ -6,38 +7,53 @@ public class MonsterFSM : MonoBehaviour
     {
         Idle,       
         Chase,      
-        Attack,     
-        Dead        
+        Attack,
     }
 
-    [SerializeField] private State _current;
-    public State Current => _current;
+    [SerializeField] private State current;
 
-    public void Evaluate(bool isSensed, Transform target)
+    public State Current => current;
+
+    public event Action<State, State> OnStateChanged;
+
+    public void Evaluate(bool isSensed, bool isInRange, Vector3 targetPos)
     {
-        if (Current == State.Dead) return;
-
         switch (Current)
-        {
+        {     
             case State.Idle:
                 if (isSensed) TransitionTo(State.Chase);
                 break;
             case State.Chase:
-                if (!isSensed) TransitionTo(State.Idle);
+                if (!isInRange) TransitionTo(State.Idle);
                 break;
             case State.Attack:
                 // #TODO: 범위 공격 범위 안에 들어오면 Attack 행동 후 다시 Chase로? Idle갔다가 다시 범위 체크하고 Chase로?
                 break;
+            default:
+                break;
         }
     }
 
-    public void SetDead() => TransitionTo(State.Dead);
+    public void SetAttack(bool isAttacking)
+    {
+        if (isAttacking)
+        {
+            TransitionTo(State.Attack);
+        }
+        else
+        {
+            TransitionTo(State.Chase);
+        }
+    }
 
     // 상태 변경
     private void TransitionTo(State next)
     {
-        if (_current == next) return;
+        if (current == next) return;
 
-        _current = next;
+        State prev = current;
+        current = next;
+
+        OnStateChanged?.Invoke(prev, next);
     }
 }

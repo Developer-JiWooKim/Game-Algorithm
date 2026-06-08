@@ -3,19 +3,30 @@ using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    [SerializeField] private MazeGenerator mazeGenerator;
-    [SerializeField] private Vector2Int playerStartPoint = new Vector2Int(0, 0);
+    [SerializeField] private MazeGenerator mazeGenerator;    
+    [SerializeField] private GameObject    monsterPrefab;
+    [SerializeField] private Transform     target;
+    [SerializeField] private int           monsterCount = 5;
+    [SerializeField] private float         spawnY = 1f;
 
-    [SerializeField] private GameObject monsterPrefab;
-    [SerializeField] private Transform target;
-    [SerializeField] private int monsterCount = 5;
-    [SerializeField] private float spawnY = 1f;
+    private Vector2Int _playerStartPoint;
+    private Vector2Int _goalPoint;
 
     // 생성된 몬스터를 List로 관리
     private List<GameObject> _monsters = new List<GameObject>();
     public List<GameObject> Monsters => _monsters;
 
-    private void Start() => SpawnAll();
+    private void Start()
+    {
+        Initialize();
+        SpawnAll();
+    }
+
+    private void Initialize()
+    {
+        _playerStartPoint = new Vector2Int(0, 0);
+        _goalPoint = new Vector2Int(mazeGenerator.Cols - 1, mazeGenerator.Rows - 1);
+    }
     public void SpawnAll()
     {
         ClearAll();
@@ -23,7 +34,10 @@ public class MonsterSpawner : MonoBehaviour
         var candidates = new List<Cell>();
         foreach (Cell cell in mazeGenerator.AllCells)
         {
-            if (cell.col == playerStartPoint.x && cell.row == playerStartPoint.y) continue;
+            // 플레이어 시작점 or 목표 지점에는 몬스터 생성 X
+            if (cell.col == _playerStartPoint.x && cell.row == _playerStartPoint.y) continue;
+            if (cell.col == _goalPoint.x && cell.row == _goalPoint.y) continue;
+
             candidates.Add(cell);
         }
 
@@ -35,7 +49,7 @@ public class MonsterSpawner : MonoBehaviour
 
         for (int i = 0; i < monsterCount; i++)
         {
-            // Cell.worldCenter로 스폰 위치 결정 (벽 겹침 없음)
+            // Cell.worldCenter로 몬스터 스폰
             Vector3 spawnPos = candidates[Random.Range(0, candidates.Count)].worldCenter;
             spawnPos.y = spawnY;
 

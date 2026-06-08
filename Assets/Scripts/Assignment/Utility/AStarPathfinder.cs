@@ -5,7 +5,7 @@ public class AStarPathfinder : MonoBehaviour
 {
     [SerializeField] private MazeGenerator mazeGenerator;
 
-    private int cost = 10;
+    private int _cost = 10;
 
     private static AStarPathfinder _instance;
     public static AStarPathfinder Instance { get; private set; }
@@ -19,6 +19,11 @@ public class AStarPathfinder : MonoBehaviour
         {
             Destroy(this.gameObject);
         }        
+    }
+
+    public Vector2Int WorldToCell(Vector3 worldPos)
+    {
+        return mazeGenerator.WorldToCell(worldPos);
     }
 
     public List<Vector3> FindPath(Vector3 startWorld, Vector3 goalWorld)
@@ -58,7 +63,7 @@ public class AStarPathfinder : MonoBehaviour
                 if (closedSet.Contains(neighbor)) continue;
 
                 // 한 셀 이동 비용 책정
-                int newGCost = gCost[current] + cost;
+                int newGCost = gCost[current] + _cost;
 
                 if (!gCost.ContainsKey(neighbor) || newGCost < gCost[neighbor])
                 {
@@ -71,12 +76,13 @@ public class AStarPathfinder : MonoBehaviour
                 }
             }            
         }
+
         return null;
     }
 
     private List<Vector3> BuildPath(Dictionary<Vector2Int, Vector2Int> cameFrom, Vector2Int current)
     {
-        var path = new List<Vector2Int>();
+        List<Vector2Int> path = new List<Vector2Int>();
         path.Add(current);
 
         while (cameFrom.ContainsKey(current))
@@ -87,9 +93,14 @@ public class AStarPathfinder : MonoBehaviour
 
         path.Reverse();
 
-        var worldPath = new List<Vector3>();
+        if(path.Count > 1)
+        {
+            path.RemoveAt(0);
+        }
 
-        foreach (var node in path)
+        List<Vector3> worldPath = new List<Vector3>();
+
+        foreach (Vector2Int node in path)
         {
             worldPath.Add(mazeGenerator.CellToWorld(node));
         }           
@@ -108,10 +119,10 @@ public class AStarPathfinder : MonoBehaviour
 
         // true면 벽 있음 - 이동 불가
         // false면 벽 없음 - 이동 가능
-        if (!cell.upWall)    result.Add(new Vector2Int(node.x,     node.y + 1));
-        if (!cell.downWall)  result.Add(new Vector2Int(node.x,     node.y - 1));
-        if (!cell.leftWall)  result.Add(new Vector2Int(node.x - 1, node.y));
-        if (!cell.rightWall) result.Add(new Vector2Int(node.x + 1, node.y));
+        if (!cell.northWall) result.Add(new Vector2Int(node.x,     node.y + 1));
+        if (!cell.southWall) result.Add(new Vector2Int(node.x,     node.y - 1));
+        if (!cell.eastWall ) result.Add(new Vector2Int(node.x + 1, node.y));
+        if (!cell.westWall)  result.Add(new Vector2Int(node.x - 1, node.y));
 
         return result;
 

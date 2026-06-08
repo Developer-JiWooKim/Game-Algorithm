@@ -1,28 +1,111 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterMove : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed    = 7f; // 이동 속도
-    [SerializeField] private float rotateSpeed  = 7f; // 회전 속도
+    [SerializeField] private float moveSpeed    = 7f;   // 이동 속도
+    [SerializeField] private float rotateSpeed  = 15f;  // 회전 속도
+    [SerializeField] private float nodeDistance = 0.5f;
 
-    public void MoveToTarget(Transform target)
-    {        
-        Vector3 moveDir = target.position - transform.position;
-        moveDir.y = 0;
+    private List<Vector3> _path;
+    private int           _pathIndex;
+    private Vector2Int    _lastGoalCell = Vector2Int.zero;
+    private float         _sphereCastRaduis = 0.5f; // 몬스터 크기 Radius
 
-        // 타겟과의 거리가 너무 가까우면 멈추게 설정
-        if (moveDir.sqrMagnitude < 0.001f)
+    public void IdleRotate()
+    {
+        transform.Rotate(0f, rotateSpeed * Time.deltaTime, 0f, Space.World);
+    }
+
+    public void RequestPath(Vector3 targetPos)
+    {
+        if (AStarPathfinder.Instance == null) return;
+
+        Vector2Int goalCell = AStarPathfinder.Instance.WorldToCell(targetPos);
+
+        if (goalCell == _lastGoalCell && _path != null) return;
+
+        _lastGoalCell = goalCell;
+
+        List<Vector3> newPath = AStarPathfinder.Instance.FindPath(transform.position, targetPos);
+
+        if (newPath != null && newPath.Count > 0)
         {
-            Debug.Log("너무 가까워서 움직임 멈춤");
-            return;
+            _path = newPath;
+            _pathIndex = 0;
         }
+    }
 
-        // Vector3 정규화
-        moveDir = moveDir.normalized;
+    public void ClearPath()
+    {
+        _path = null;
+        _pathIndex = 0;
+    }
 
-        RotateToward(moveDir);
+    public void MoveToTarget(Vector3 targetPos)
+    {
+        if (IsPathClear(targetPos))
+        {
+            ClearPath();
+            MoveStraight(targetPos);
+        }
+        else
+        {
+            RequestPath(targetPos);
+            // 길이 없거나 끝에 도달했으면 타겟 방향으로 직진
+            if (_path == null || _pathIndex >= _path.Count)
+            {
+                MoveStraight(targetPos);
+                return;
+            }
 
-        transform.Translate(moveDir * Time.deltaTime * moveSpeed, Space.World);  
+            Vector3 nodePos = _path[_pathIndex];
+            nodePos.y = transform.position.y;
+
+            // 목표 노드에 도착 시 다음 노드로 목표 노드를 바꿈
+            if ((nodePos - transform.position).sqrMagnitude < nodeDistance * nodeDistance)
+            {
+                _pathIndex++;
+                return;
+            }
+
+            MoveStraight(nodePos);
+        }
+    }
+
+    public void LookAtTarget(Vector3 targetPos)
+    {
+        Vector3 dir = targetPos - transform.position;
+        dir.y = 0;
+
+        if (dir.sqrMagnitude < 0.001f) return;
+
+        RotateToward(dir.normalized);
+    }
+
+    // SphereCast로 현재 타겟과 자신 사이에 벽이 있는지 체크
+    private bool IsPathClear(Vector3 targetPos)
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+        Vector3 direction = (targetPos - transform.position);
+        direction.y = 0;
+        float distance = direction.magnitude;
+
+        return !Physics.SphereCast(origin, _sphereCastRaduis, direction.normalized, out _, distance, LayerMask.GetMask("Wall"));
+    }
+
+    private void MoveStraight(Vector3 targetPos)
+    {
+        Vector3 dir = targetPos - transform.position;
+        dir.y = 0f;
+
+        if (dir.sqrMagnitude < 0.001f) return;
+
+        dir = dir.normalized;
+
+        RotateToward(dir);
+
+        transform.Translate(dir * moveSpeed * Time.deltaTime, Space.World);
     }
 
     private void RotateToward(Vector3 dir)
@@ -31,16 +114,5 @@ public class MonsterMove : MonoBehaviour
 
         // 부드러운 회전
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
-    }
-
-    // #TODO: 사용할지 안할지 모름
-    public void LookAtTarget(Transform target)
-    {
-        Vector3 dir = target.position - transform.position;
-        dir.y = 0;
-
-        if (dir.sqrMagnitude < 0.001f) return;
-
-        RotateToward(dir.normalized);
     }
 }

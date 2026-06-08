@@ -2,30 +2,43 @@ using UnityEngine;
 
 public class MonsterSight : MonoBehaviour
 {
-    [SerializeField] private float detectionRange = 7f;    // 탐지 반경
+    [SerializeField] private float detectionRange = 15f;   // 감지 반경
     [SerializeField] private float fieldOfView    = 90f;   // 시야각
     [SerializeField] private bool  isSense        = false; // 감지 여부
 
-    public bool TargetSense(Transform target)
+    public bool TargetSense(Vector3 targetPos)
     {
-        if (target == null) return isSense = false;
-
-        Vector3 dirToPlayer = target.position - transform.position;
+        Vector3 dirToPlayer = targetPos - transform.position;
         dirToPlayer.y = 0;
+        dirToPlayer = dirToPlayer.normalized;
 
-        // 타겟이 탐지 반경(detectionRange) 밖에 있으면 내적 계산 X
-        if (dirToPlayer.magnitude > detectionRange)
+        float dot = Vector3.Dot(transform.forward, dirToPlayer);    
+        dot = Mathf.Clamp(dot, -1, 1); // 내적값이 -1 ~ 1을 초과하지 못하게 방어
+        float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
+
+        if (angle >= fieldOfView * 0.5f)
         {
             return isSense = false;
         }
 
-        float dot = Vector3.Dot(transform.forward, dirToPlayer.normalized);    
-        dot = Mathf.Clamp(dot, -1, 1); // 내적값이 -1 ~ 1을 초과하지 못하게 방어
-
-        float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+        float distance = Vector3.Distance(transform.position, targetPos);
         
-        // 시야각 안으로 플레이어가 들어오면 감지 성공
-        return isSense = (angle < fieldOfView * 0.5f);
+        // 벽이 가로막고 있으면 감지 실패
+        if(Physics.Raycast(origin, dirToPlayer, distance, LayerMask.GetMask("Wall")))
+        {
+            return isSense = false;
+        }
+
+        return isSense = true;
+    }
+
+    public bool IsInRange(Vector3 targetPos)
+    {
+        Vector3 dir = targetPos - transform.position;
+        dir.y = 0f;
+
+        return dir.sqrMagnitude <= detectionRange * detectionRange;
     }
 
     private void OnDrawGizmos()

@@ -6,10 +6,10 @@ public class Cell
     public bool visited;
 
     // 각 방향 벽 (true = 벽 있음)
-    public bool upWall = true;
-    public bool downWall = true;
-    public bool leftWall = true;
-    public bool rightWall = true;
+    public bool northWall = true;  
+    public bool southWall = true;
+    public bool eastWall  = true;  
+    public bool westWall  = true;  
 
     public UnityEngine.Vector3 worldCenter;
 

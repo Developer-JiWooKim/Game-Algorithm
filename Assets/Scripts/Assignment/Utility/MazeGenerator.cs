@@ -4,28 +4,28 @@ using UnityEngine;
 public class MazeGenerator : MonoBehaviour
 {
     [Header("Gird")]
-    [SerializeField] private int _cols = 10; // 가로
-    [SerializeField] private int _rows= 10;  // 세로
-    [SerializeField] private float _cellSize = 5f;
+    [SerializeField] private int    _cols = 10; // 가로
+    [SerializeField] private int    _rows= 10;  // 세로
+    [SerializeField] private float  _cellSize = 5f;
 
     [Header("시작 점")]
     [SerializeField] private Vector2 worldStart = new Vector2(-25f, -25f);
 
     [Header("Walls")]
     [SerializeField] private GameObject wallPrefab;
-    [SerializeField] private float wallThickness = 0.3f;
-    [SerializeField] private float wallHeight = 3f;
+    [SerializeField] private float      wallThickness = 0.3f;
+    [SerializeField] private float      wallHeight    = 3f;
 
     [Header("Random Seed")]
     [SerializeField] private int seed = -1;    
 
-    private Cell[,] _grid;    
+    private Cell[,]          _grid;    
     private List<GameObject> _wallObjects = new List<GameObject>();
-    private List<Cell> _allCells = new List<Cell>();
+    private List<Cell>       _allCells    = new List<Cell>();
 
     public IReadOnlyList<Cell> AllCells => _allCells;
     public int Cols  => _cols;
-    public int Rows => _rows;
+    public int Rows  => _rows;
     public float CellSize => _cellSize;
 
     private void Awake() => Generate();
@@ -71,8 +71,14 @@ public class MazeGenerator : MonoBehaviour
     private void RunDFS()
     {
         // 매번 다른 맵이 나오도록 시드값 설정
-        if (seed == -1) Random.InitState(System.DateTime.Now.Millisecond);
-        else Random.InitState(seed);
+        if (seed == -1)
+        {
+            Random.InitState(System.DateTime.Now.Millisecond);
+        }
+        else
+        {
+            Random.InitState(seed);
+        }
 
         Stack<Cell> stack = new Stack<Cell>();
 
@@ -110,10 +116,10 @@ public class MazeGenerator : MonoBehaviour
         int c = cell.col;
         int r = cell.row;
 
-        if (r + 1 < _rows&& !_grid[c, r + 1].visited) list.Add(_grid[c, r + 1]);  // up
-        if (r - 1 >= 0 && !_grid[c, r - 1].visited) list.Add(_grid[c, r - 1]);    // down
-        if (c + 1 < _cols && !_grid[c + 1, r].visited) list.Add(_grid[c + 1, r]); // left
-        if (c - 1 >= 0 && !_grid[c - 1, r].visited) list.Add(_grid[c - 1, r]);    // right
+        if (r + 1 < _rows && !_grid[c, r + 1].visited) list.Add(_grid[c, r + 1]); // up
+        if (r - 1 >= 0    && !_grid[c, r - 1].visited) list.Add(_grid[c, r - 1]); // down
+        if (c + 1 < _cols && !_grid[c + 1, r].visited) list.Add(_grid[c + 1, r]); // right
+        if (c - 1 >= 0    && !_grid[c - 1, r].visited) list.Add(_grid[c - 1, r]); // left
 
         return list;
     }
@@ -123,10 +129,10 @@ public class MazeGenerator : MonoBehaviour
         int dc = b.col - a.col;
         int dr = b.row - a.row;
 
-        if (dr == 1) { a.upWall = false; b.downWall = false; }          // a 위에 b
-        else if (dr == -1) { a.downWall = false; b.upWall = false; }    // a 아래에 b
-        else if (dc == 1) { a.leftWall = false; b.rightWall = false; }  // a 오른쪽에 b
-        else if (dc == -1) { a.rightWall = false; b.leftWall = false; } // a 왼쪽에 b
+        if      (dr == 1)   { a.northWall = false; b.southWall = false; }    
+        else if (dr == -1)  { a.southWall = false; b.northWall = false; }    
+        else if (dc == 1)   { a.eastWall  = false; b.westWall = false; } 
+        else if (dc == -1)  { a.westWall  = false; b.eastWall  = false; } 
     }
 
     private void SpawnWalls()
@@ -146,25 +152,25 @@ public class MazeGenerator : MonoBehaviour
                 float cx = worldStart.x + c * _cellSize + _cellSize * 0.5f;
                 float cz = worldStart.y + r * _cellSize + _cellSize * 0.5f;
 
-                if (cell.upWall)
+                if (cell.northWall)
                 {
                     Vector3 pos = new Vector3(cx, wallHeight * 0.5f, cz + _cellSize * 0.5f);
                     SpawnWall(pos, false, wallParent.transform);
                 }
 
-                if (cell.leftWall)
+                if (cell.eastWall)
                 {
                     Vector3 pos = new Vector3(cx + _cellSize * 0.5f, wallHeight * 0.5f, cz);
                     SpawnWall(pos, true, wallParent.transform);
                 }
 
-                if (r == 0 && cell.downWall)
+                if (r == 0 && cell.southWall)
                 {
                     Vector3 pos = new Vector3(cx, wallHeight * 0.5f, cz - _cellSize * 0.5f);
                     SpawnWall(pos, false, wallParent.transform);
                 }
 
-                if (c == 0 && cell.rightWall)
+                if (c == 0 && cell.westWall)
                 {
                     Vector3 pos = new Vector3(cx - _cellSize * 0.5f, wallHeight * 0.5f, cz);
                     SpawnWall(pos, true, wallParent.transform);
@@ -214,9 +220,7 @@ public class MazeGenerator : MonoBehaviour
         Gizmos.color = Color.green;
         float totalW = _cols * _cellSize;
         float totalH = _rows * _cellSize;
-        Vector3 center = new Vector3(
-            worldStart.x + totalW * 0.5f, 0,
-            worldStart.y + totalH * 0.5f);
+        Vector3 center = new Vector3(worldStart.x + totalW * 0.5f, 0, worldStart.y + totalH * 0.5f);
         Gizmos.DrawWireCube(center, new Vector3(totalW, 0.1f, totalH));
 
         // 셀 그리드
@@ -227,9 +231,7 @@ public class MazeGenerator : MonoBehaviour
             {
                 float cx = worldStart.x + c * _cellSize + _cellSize * 0.5f;
                 float cz = worldStart.y + r * _cellSize + _cellSize * 0.5f;
-                Gizmos.DrawWireCube(
-                    new Vector3(cx, 0, cz),
-                    new Vector3(_cellSize - 0.1f, 0.1f, _cellSize - 0.1f));
+                Gizmos.DrawWireCube(new Vector3(cx, 0, cz), new Vector3(_cellSize - 0.1f, 0.1f, _cellSize - 0.1f));
             }
         }
     }

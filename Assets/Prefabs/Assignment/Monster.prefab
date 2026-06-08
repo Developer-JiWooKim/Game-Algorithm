@@ -238,6 +238,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2692404738279027445}
   - component: {fileID: 7561861720274258743}
+  - component: {fileID: 6174907647041975756}
   m_Layer: 0
   m_Name: AttackRange
   m_TagString: Untagged
@@ -281,6 +282,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6174907647041975756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6710564960525478259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e86b21a40de4d54448bddc392fc182a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterAttack
 --- !u!1 &7092602877218490808
 GameObject:
   m_ObjectHideFlags: 0
@@ -357,7 +370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc40ee4ec93c7924b996750c8daca074, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSight
-  detectionRange: 7
+  detectionRange: 15
   fieldOfView: 90
   isSense: 0
 --- !u!114 &5455248322757765073
@@ -373,7 +386,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterMove
   moveSpeed: 7
-  rotateSpeed: 7
+  rotateSpeed: 15
+  nodeDistance: 0.5
 --- !u!114 &5455916527998377572
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,4 +412,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d8522d3160d2674690fc6321b24e958, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterFSM
-  _current: 0
+  current: 0
