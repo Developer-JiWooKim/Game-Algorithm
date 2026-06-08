@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public System.Action<int, int> OnHPChanged;  // (현재, 최대)
     public System.Action OnDead;
 
-    private void Start() => Initialize();
+    private void Awake() => Initialize();
 
     private void Initialize()
     {
@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         Vector3 dir = new Vector3(_playerInput.InputVector.x, 0, _playerInput.InputVector.y);
+
         _playerMove.Move(dir, moveSpeed);
     }
 

@@ -27,6 +27,13 @@ public class GameManager : MonoBehaviour
         if (_isGameEnd) return;
 
         _isGameEnd = true;
+
+        // 모든 몬스터 타겟 제거
+        foreach (var monster in FindObjectsByType<MonsterController>())
+        {
+            monster.Target = null;
+        }           
+
         OnClear?.Invoke();
     }
 
