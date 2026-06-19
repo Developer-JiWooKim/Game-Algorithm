@@ -11,9 +11,13 @@ public class SimpleCharacterControllerMove : MonoBehaviour
     private InputAction moveAction;
     private float verticalVelocity;
 
+    private SimpleAnimatorDriver simpleAnimatorDriver;
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+
+        simpleAnimatorDriver = GetComponent<SimpleAnimatorDriver>();
 
         moveAction = new InputAction("Move", InputActionType.Value);
         moveAction.AddCompositeBinding("2DVector")
@@ -54,6 +58,13 @@ public class SimpleCharacterControllerMove : MonoBehaviour
         move.y = verticalVelocity;
 
         controller.Move(move * Time.deltaTime);
+
+        Vector3 horizontalVelocity = controller.velocity;
+        horizontalVelocity.y = 0f;
+
+        float speed = horizontalVelocity.magnitude;
+
+        simpleAnimatorDriver.SetSpeedAnim(speed);
     }
 
 }
